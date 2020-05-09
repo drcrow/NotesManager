@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const URI = process.env.MONGODB_URI;
+const URI = process.env.ENV_MONGODB_URI;
 //console.log(URI);
 
 mongoose.connect(URI, {
