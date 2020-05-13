@@ -8,6 +8,8 @@ export default class NotesList extends Component {
     state = {
         users: [],
         userSelected: '',
+        title: '',
+        content: '',
         dateSelected: new Date()
     }
 
@@ -23,14 +25,15 @@ export default class NotesList extends Component {
 
     onSubmitForm = async (e) => {
         e.preventDefault();
-        await axios.post( 'http://localhost:4000/api/users', { username: this.state.username } );
-        this.setState( { "username": "" } );
-        this.getUsers();
+        console.log(this.state);
+        //await axios.post( 'http://localhost:4000/api/users', { username: this.state.username } );
+        //this.setState( { "username": "" } );
+        //this.getUsers();
     }
 
-    onChangeUserSelected = (e) => {
-        //console.log(e.target.value);
-        this.setState( { userSelected: e.target.value } );
+    onChangeInput = (e) => {
+        console.log(e.target.name, e.target.value);
+        this.setState( { [e.target.name]: e.target.value } );
     }
 
     onChangeDate = (date) => {
@@ -45,15 +48,16 @@ export default class NotesList extends Component {
                     <h4>Create Note</h4>
                     <form onSubmit={ this.onSubmitForm }>
                         <div className="form-group">
-                            <select className="form-control" name="userSelected" onChange={ this.onChangeUserSelected }>
-        { this.state.users.map( user => <option key={ user._id } value={ user._id }>{ user.username }</option> ) }
+                            <select className="form-control" name="userSelected" onChange={ this.onChangeInput }>
+                                <option value="">Author</option>
+        { this.state.users.map( user => <option key={ user._id } value={ user.username }>{ user.username }</option> ) }
                             </select>
                         </div>
                         <div className="form-group">
-                            <input type="text" className="form-control" placeholder="Title" name="title" required />
+                            <input type="text" className="form-control" placeholder="Title" name="title" required onChange={ this.onChangeInput } />
                         </div>
                         <div className="form-group">
-                            <textarea className="form-control" name="content" placeholder="Content" required></textarea>
+                            <textarea className="form-control" name="content" placeholder="Content" required onChange={ this.onChangeInput }></textarea>
                         </div>
                         <div className="form-group">
                             <DatePicker className="form-control" selected={ this.state.dateSelected } name="date" onChange={ this.onChangeDate } />
