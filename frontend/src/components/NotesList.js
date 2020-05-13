@@ -43,7 +43,7 @@ export default class NotesList extends Component {
 
     render() {
         return (
-            <div className="col-md-6 offset-md-3">
+            <div className="col-md-6">
                 <div className="card card-body">
                     <h4>Create Note</h4>
                     <form onSubmit={ this.onSubmitForm }>
