@@ -5,7 +5,7 @@ import './App.css';
 
 import CreateNote from './components/CreateNote';
 import CreateUser from './components/CreateUser';
-import MernLogo from './components/MernLogo';
+
 import Navigation from './components/Navigation';
 import NotesList from './components/NotesList';
 
@@ -14,13 +14,12 @@ function App() {
     <Router>
         <Navigation/>
         <div className="container p-4">
-          <div className="row">
-            <MernLogo />
+          
             <Route path="/" component={NotesList} exact />
             <Route path="/edit/:id" component={CreateNote} />
             <Route path="/create" component={CreateNote} />
             <Route path="/user" component={CreateUser} />
-          </div>
+          
         </div>
     </Router>
   );

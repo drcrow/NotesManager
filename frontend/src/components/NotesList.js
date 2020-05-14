@@ -1,70 +1,59 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import MernLogo from './MernLogo';
 import axios from 'axios'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
+import { format } from 'timeago.js'
 
-export default class NotesList extends Component {
+export default class NoteList extends Component {
 
     state = {
         users: [],
-        userSelected: '',
-        title: '',
-        content: '',
-        dateSelected: new Date()
+        notes: []
     }
 
-    async componentDidMount(){
-        this.getUsers();
-        //console.log(this.state.users);
+    componentDidMount() {
+        this.getNotes();
     }
 
-    getUsers = async () => {
-        const res = await axios.get('http://localhost:4000/api/users');
-        this.setState( { users: res.data } );
+    getNotes = async () => {
+        const res = await axios.get('http://localhost:4000/api/notes');
+        this.setState( { notes: res.data } );
     }
 
-    onSubmitForm = async (e) => {
-        e.preventDefault();
-        console.log(this.state);
-        //await axios.post( 'http://localhost:4000/api/users', { username: this.state.username } );
-        //this.setState( { "username": "" } );
-        //this.getUsers();
-    }
-
-    onChangeInput = (e) => {
-        console.log(e.target.name, e.target.value);
-        this.setState( { [e.target.name]: e.target.value } );
-    }
-
-    onChangeDate = (date) => {
-        this.setState( { dateSelected: date} );
-        console.log(date);
+    deleteNote = async (id) => {
+        await axios.delete('http://localhost:4000/api/notes/' + id);
+        this.getNotes();
+        console.log(id);
     }
 
     render() {
         return (
-            <div className="col-md-6">
-                <div className="card card-body">
-                    <h4>Create Note</h4>
-                    <form onSubmit={ this.onSubmitForm }>
-                        <div className="form-group">
-                            <select className="form-control" name="userSelected" onChange={ this.onChangeInput }>
-                                <option value="">Author</option>
-        { this.state.users.map( user => <option key={ user._id } value={ user.username }>{ user.username }</option> ) }
-                            </select>
+            <div className="row">
+                <div className="col-md-4 p-2">
+                            <div className="card">
+                            <div className="card-body">
+                                <MernLogo />
+                            </div>
+                            </div>
                         </div>
-                        <div className="form-group">
-                            <input type="text" className="form-control" placeholder="Title" name="title" required onChange={ this.onChangeInput } />
+                {
+                    this.state.notes.map(note => (
+                        <div className="col-md-4 p-2" key={note._id}>
+                            <div className="card">
+                            <div className="card-header">
+                            <h5>{ note.title }</h5>
+                            </div>
+                                <div className="card-body">
+                                    <p>{ note.content }</p>
+                                    <p><b>{ note.author }</b></p>
+                                    <small>{ format(note.date) }</small>
+                                </div>
+                                <div className="card-footer">
+                                    <button className="btn btn-danger" onClick={ () => this.deleteNote(note._id) }>Delete</button>
+                                </div>
+                            </div>
                         </div>
-                        <div className="form-group">
-                            <textarea className="form-control" name="content" placeholder="Content" required onChange={ this.onChangeInput }></textarea>
-                        </div>
-                        <div className="form-group">
-                            <DatePicker className="form-control" selected={ this.state.dateSelected } name="date" onChange={ this.onChangeDate } />
-                        </div>
-                        <button type="submit" className="btn btn-primary">Save</button>
-                    </form>
-                </div>
+                    ))
+                }
             </div>
         )
     }
