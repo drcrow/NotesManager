@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MernLogo from './MernLogo';
 import axios from 'axios'
 import { format } from 'timeago.js'
+import { Link } from 'react-router-dom'
 
 export default class NoteList extends Component {
 
@@ -48,6 +49,7 @@ export default class NoteList extends Component {
                                     <small>{ format(note.date) }</small>
                                 </div>
                                 <div className="card-footer">
+                                <Link className="btn btn-primary" to={ "/edit/" + note._id }>Edit</Link>&nbsp;
                                     <button className="btn btn-danger" onClick={ () => this.deleteNote(note._id) }>Delete</button>
                                 </div>
                             </div>

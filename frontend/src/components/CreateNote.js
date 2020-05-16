@@ -10,12 +10,28 @@ export default class CreateNote extends Component {
         userSelected: '-',
         title: '',
         content: '',
-        dateSelected: new Date()
+        dateSelected: new Date(),
+        isEditing: false,
+        editingId: ''
     }
 
     async componentDidMount(){
+        //console.log( this.props.match.params.id );
         this.getUsers();
         //console.log(this.state.users);
+
+        if( this.props.match.params.id ){
+            const res = await axios.get( 'http://localhost:4000/api/notes/' + this.props.match.params.id );
+            //console.log( res.data.note );
+            this.setState( {
+                title: res.data.note.title,
+                content: res.data.note.content,
+                userSelected: res.data.note.author,
+                dateSelected: new Date(res.data.note.date),
+                isEditing: true,
+                editingId: this.props.match.params.id
+            } );
+        }
     }
 
     getUsers = async () => {
@@ -34,7 +50,13 @@ export default class CreateNote extends Component {
             author: this.state.userSelected
         };
 
-        await axios.post( 'http://localhost:4000/api/notes', newNote );
+
+        if( this.state.isEditing ){
+            await axios.put( 'http://localhost:4000/api/notes/' + this.state.editingId, newNote );
+        }else{
+            await axios.post( 'http://localhost:4000/api/notes', newNote );
+        }
+
         //console.log(res);
         //this.setState( { "username": "" } );
         //this.getUsers();
@@ -58,16 +80,16 @@ export default class CreateNote extends Component {
                     <h4>Create Note</h4>
                     <form onSubmit={ this.onSubmitForm }>
                         <div className="form-group">
-                            <select className="form-control" name="userSelected" onChange={ this.onChangeInput }>
+                            <select value={ this.state.userSelected } className="form-control" name="userSelected" onChange={ this.onChangeInput }>
                                 <option value="">Author</option>
         { this.state.users.map( user => <option key={ user._id } value={ user.username }>{ user.username }</option> ) }
                             </select>
                         </div>
                         <div className="form-group">
-                            <input type="text" className="form-control" placeholder="Title" name="title" required onChange={ this.onChangeInput } />
+                            <input value={ this.state.title } type="text" className="form-control" placeholder="Title" name="title" required onChange={ this.onChangeInput } />
                         </div>
                         <div className="form-group">
-                            <textarea className="form-control" name="content" placeholder="Content" required onChange={ this.onChangeInput }></textarea>
+                            <textarea value={ this.state.content } className="form-control" name="content" placeholder="Content" required onChange={ this.onChangeInput }></textarea>
                         </div>
                         <div className="form-group">
                             <DatePicker className="form-control" selected={ this.state.dateSelected } name="date" onChange={ this.onChangeDate } />
